@@ -24,7 +24,7 @@ db = mongo_client['psychology_db']
 analysis_collection = db['analyses']
 
 @app.get("/analyses")
-async def list_analyses():
+def list_analyses():
     """Returns a list of all videos that have been analyzed."""
     # We only return the ID and Summary to keep the list lightweight
     cursor = analysis_collection.find({}, {"video_id": 1, "analysis.summary": 1, "_id": 0})
@@ -33,7 +33,7 @@ async def list_analyses():
     return results
 
 @app.get("/analyses/{video_id}")
-async def get_analysis(video_id: str):
+def get_analysis(video_id: str):
     """Returns the full analysis for a specific video."""
     result = analysis_collection.find_one({"video_id": video_id}, {"_id": 0})
     
