@@ -1,0 +1,4 @@
+pika
+minio
+moviepy==1.0.3
+python-json-logger

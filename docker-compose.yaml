@@ -82,6 +82,23 @@ services:
       - minio
     labels:
       com.datadoghq.ad.logs: '[{"source": "python", "service": "upload-service"}]'
+
+
+    # 7. Converter Service (Video -> MP3)
+  converter-service:
+    build: ./converter_service
+    container_name: converter-service
+    environment:
+      - RABBITMQ_HOST=psycho-rabbitmq
+      - MINIO_ENDPOINT=psycho-minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+    depends_on:
+      - rabbitmq
+      - minio
+    labels:
+      com.datadoghq.ad.logs: '[{"source": "python", "service": "converter-service"}]'
+  
 volumes:
   minio_data:
   mongo_data:
