@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  # 1. Message Broker (RabbitMQ)
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: psycho-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    labels:
+      com.datadoghq.ad.logs: '[{"source": "rabbitmq", "service": "rabbitmq"}]'
+
+  # 2. Object Storage (MinIO)
+  minio:
+    image: minio/minio
+    container_name: psycho-minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+    labels:
+      com.datadoghq.ad.logs: '[{"source": "minio", "service": "minio"}]'
+
+  # 3. Database (MongoDB)
+  mongodb:
+    image: mongo:latest
+    container_name: psycho-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    labels:
+      com.datadoghq.ad.logs: '[{"source": "mongodb", "service": "mongodb"}]'
+
+  # 4. Cache (Redis)
+  redis:
+    image: redis:alpine
+    container_name: psycho-redis
+    ports:
+      - "6379:6379"
+    labels:
+      com.datadoghq.ad.logs: '[{"source": "redis", "service": "redis"}]'
+
+  # 5. DataDog Agent (The Observer)
+  datadog:
+    image: gcr.io/datadoghq/agent:7
+    container_name: psycho-datadog
+    environment:
+      - DD_API_KEY=${DD_API_KEY}   # Read from .env file
+      - DD_SITE=datadoghq.eu   # Change to datadoghq.com if you are in the US
+      - DD_LOGS_ENABLED=true
+      - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true # Capture all logs from other containers
+      - DD_PROCESS_AGENT_ENABLED=true
+      - DD_LOG_LEVEL=WARN
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+
+volumes:
+  minio_data:
+  mongo_data:
