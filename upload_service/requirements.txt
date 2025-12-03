@@ -3,3 +3,4 @@ uvicorn
 python-multipart
 minio
 pika
+python-json-logger

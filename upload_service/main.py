@@ -4,10 +4,19 @@ import logging
 from fastapi import FastAPI, UploadFile, HTTPException
 from minio import Minio
 import pika
+import sys
+from pythonjsonlogger import jsonlogger
 
-# Configure Logging (JSON format is best for DataDog, but standard logging works too)
-logging.basicConfig(level=logging.INFO)
+# --- Enhanced JSON Logging ---
 logger = logging.getLogger("upload_service")
+logHandler = logging.StreamHandler(sys.stdout) # Write to stdout (not stderr)
+formatter = jsonlogger.JsonFormatter(
+    fmt='%(asctime)s %(levelname)s %(name)s %(message)s'
+)
+logHandler.setFormatter(formatter)
+logger.addHandler(logHandler)
+logger.setLevel(logging.INFO)
+# -----------------------------
 
 app = FastAPI()
 
