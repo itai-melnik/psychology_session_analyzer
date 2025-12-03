@@ -1,0 +1,5 @@
+openai
+redis
+pymongo
+pika
+python-json-logger

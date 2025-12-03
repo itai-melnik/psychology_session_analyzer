@@ -116,6 +116,23 @@ services:
     labels:
       com.datadoghq.ad.logs: '[{"source": "python", "service": "transcription-service"}]'
 
+
+  # 9. Analysis Service (OpenAI + Redis + Mongo)
+  analysis-service:
+    build: ./analysis_service
+    container_name: analysis-service
+    environment:
+      - RABBITMQ_HOST=psycho-rabbitmq
+      - MONGO_URI=mongodb://psycho-mongo:27017
+      - REDIS_HOST=psycho-redis
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      - rabbitmq
+      - mongodb
+      - redis
+    labels:
+      com.datadoghq.ad.logs: '[{"source": "python", "service": "analysis-service"}]'
+
     
   
 volumes:
