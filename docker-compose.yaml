@@ -133,6 +133,21 @@ services:
     labels:
       com.datadoghq.ad.logs: '[{"source": "python", "service": "analysis-service"}]'
 
+
+
+  # 10. Query Service (Read API)
+  query-service:
+    build: ./query_service
+    container_name: query-service
+    ports:
+      - "8002:8000"
+    environment:
+      - MONGO_URI=mongodb://psycho-mongo:27017
+    depends_on:
+      - mongodb
+    labels:
+      com.datadoghq.ad.logs: '[{"source": "python", "service": "query-service"}]'
+
     
   
 volumes:
