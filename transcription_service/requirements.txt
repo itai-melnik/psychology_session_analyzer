@@ -1,0 +1,4 @@
+requests
+pika
+minio
+python-json-logger

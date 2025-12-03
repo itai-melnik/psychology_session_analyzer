@@ -98,6 +98,25 @@ services:
       - minio
     labels:
       com.datadoghq.ad.logs: '[{"source": "python", "service": "converter-service"}]'
+
+
+  # 8. Transcription Service (AssemblyAI)
+  transcription-service:
+    build: ./transcription_service
+    container_name: transcription-service
+    environment:
+      - RABBITMQ_HOST=psycho-rabbitmq
+      - MINIO_ENDPOINT=psycho-minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - ASSEMBLYAI_API_KEY=${ASSEMBLYAI_API_KEY} # Read from .env
+    depends_on:
+      - rabbitmq
+      - minio
+    labels:
+      com.datadoghq.ad.logs: '[{"source": "python", "service": "transcription-service"}]'
+
+    
   
 volumes:
   minio_data:
